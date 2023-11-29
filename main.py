@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify
 from prometheus_flask_exporter import PrometheusMetrics
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
+from prometheus_client import make_wsgi_app
 from urllib.parse import urlparse
 import redis
 import psycopg2
@@ -77,7 +79,12 @@ def track_visit():
 
 @app.route('/metrics_route')
 def metrics_endpoint():
-    return metrics
+    return metrics.registry.collect().encode('utf-8')
+
+# Add prometheus wsgi middleware to route /metrics requests
+app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
+    '/metrics': make_wsgi_app()
+})
 
 
 if __name__ == '__main__':

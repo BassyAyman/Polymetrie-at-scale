@@ -2,3 +2,5 @@ Flask
 prometheus_flask_exporter
 redis
 psycopg2
+werkzeug
+prometheus_client
