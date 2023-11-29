@@ -4,7 +4,7 @@ services:
   web:
     build: .
     ports:
-      - "5000:5000"
+      - "8080:8080"
     environment:
       - FLASK_ENV=development
       - DATABASE_URL=postgresql://si5_sacc:dev_password@database/td_1
@@ -13,7 +13,6 @@ services:
       - redis
     volumes:
       - .:/code
-    command: flask run --host=0.0.0.0
 
   database:
     image: postgres:14
