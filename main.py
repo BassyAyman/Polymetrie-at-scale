@@ -4,13 +4,14 @@ from urllib.parse import urlparse
 import redis
 import psycopg2
 import logging
+import os
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 metrics = PrometheusMetrics(app)
-redis_client = redis.Redis(host='redis', port=6379, db=0)
+redis_client = redis.Redis(host=os.environ.get("REDIS_HOST"), port=os.environ.get("REDIS_PORT"), db=0)
 
 
 def increment_counter(url):
@@ -19,23 +20,15 @@ def increment_counter(url):
 
 
 def find_client(domain):
-    """
-      - POSTGRES_PASSWORD=dev_password
-      - POSTGRES_USER=si5_sacc
-      - POSTGRES_DB=td_1
-    :param domain:
-    :return:
-    """
     if not domain:
         return None
 
     try:
-        # connect to       - DATABASE_URL=postgresql://si5_sacc:dev_password@database/td_1
-        connection = psycopg2.connect(user="si5_sacc",
-                                      password="dev_password",
-                                      host="database",
-                                      port="5432",
-                                      database="td_1")
+        connection = psycopg2.connect(user=os.environ.get("POSTGRES_USER"),
+                                      password=os.environ.get("POSTGRES_PASSWORD"),
+                                      host=os.environ.get("POSTGRES_HOST"),
+                                      port=os.environ.get("POSTGRES_PORT"),
+                                      database=os.environ.get("POSTGRES_DB"))
         logger.info("Connected to PostgreSQL")
 
         cursor = connection.cursor()
