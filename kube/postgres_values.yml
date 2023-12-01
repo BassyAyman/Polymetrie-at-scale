@@ -1,0 +1,5 @@
+global:
+  postgresql:
+    auth:
+      username: si5_sacc
+      database: td_1
