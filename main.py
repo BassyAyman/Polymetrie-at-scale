@@ -53,7 +53,8 @@ def test_connection():
     conn = None
     try:
         # connect to the PostgreSQL server
-        logger.info("Connecting to the PostgreSQL database...")
+        bd = os.environ.get("POSTGRES_DB")
+        logger.info(f"Connecting to the PostgreSQL database... {bd}")
         conn = psycopg2.connect(user=os.environ.get("POSTGRES_USER"),
                                       password=os.environ.get("POSTGRES_PASSWORD"),
                                       host=os.environ.get("POSTGRES_HOST"),
@@ -74,6 +75,7 @@ def test_connection():
 	# close the communication with the PostgreSQL
         cur.close()
     except (Exception, psycopg2.DatabaseError) as error:
+        logger.info("An error occured : ")
         logger.info(error)
         return error
     finally:
