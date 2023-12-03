@@ -15,5 +15,11 @@ spec:
       containers:
       - name: polymetrie-container
         image: igormel/polymetrie:1.1
+        env:
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: my-postgresql
+              key: password
         ports:
           - containerPort: 8080
