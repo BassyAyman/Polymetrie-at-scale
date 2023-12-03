@@ -21,5 +21,10 @@ spec:
             secretKeyRef:
               name: my-postgresql
               key: password
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: my-redis
+              key: redis-password
         ports:
           - containerPort: 8080

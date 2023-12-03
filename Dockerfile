@@ -9,8 +9,8 @@ ENV POSTGRES_USER=si5_sacc \
     POSTGRES_DB=td_1 \
     POSTGRES_HOST=my-postgresql \
     POSTGRES_PORT=5432 \
-    REDIS_HOST=${REDIS_HOST} \
-    REDIS_PORT=${REDIS_PORT}
+    REDIS_HOST=my-redis \
+    REDIS_PORT=6379
 
 COPY main.py app.py
 
