@@ -3,3 +3,8 @@ global:
     auth:
       username: si5_sacc
       database: td_1
+
+primary:
+  name: primary
+  pgHbaConfiguration: |-
+    host all all all trust
