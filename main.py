@@ -13,7 +13,8 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 metrics = PrometheusMetrics(app)
-redis_client = redis.Redis(host=os.environ.get("REDIS_HOST"), port=os.environ.get("REDIS_PORT"), password=os.environ.get("REDIS_PASSWORD"), db=0)
+redis_client = redis.Redis(host=os.environ.get("REDIS_HOST"), port=os.environ.get("REDIS_PORT"),
+                           password=os.environ.get("REDIS_PASSWORD"), db=0)
 
 
 def increment_counter(url):
@@ -47,6 +48,7 @@ def find_client(domain):
 
     return client
 
+
 @app.route('/test_db_co', methods=['GET'])
 def test_connection():
     """ Connect to the PostgreSQL database server """
@@ -56,23 +58,23 @@ def test_connection():
         bd = os.environ.get("POSTGRES_DB")
         logger.info(f"Connecting to the PostgreSQL database... {bd}")
         conn = psycopg2.connect(user=os.environ.get("POSTGRES_USER"),
-                                      password=os.environ.get("POSTGRES_PASSWORD"),
-                                      host=os.environ.get("POSTGRES_HOST"),
-                                      port=os.environ.get("POSTGRES_PORT"),
-                                      database=os.environ.get("POSTGRES_DB"))
-		
+                                password=os.environ.get("POSTGRES_PASSWORD"),
+                                host=os.environ.get("POSTGRES_HOST"),
+                                port=os.environ.get("POSTGRES_PORT"),
+                                database=os.environ.get("POSTGRES_DB"))
+
         # create a cursor
         cur = conn.cursor()
-        
-	# execute a statement
+
+        # execute a statement
         logger.info('PostgreSQL database version:')
         cur.execute('SELECT version()')
 
         # display the PostgreSQL database server version
         db_version = cur.fetchone()
         logger.info(db_version)
-       
-	# close the communication with the PostgreSQL
+
+        # close the communication with the PostgreSQL
         cur.close()
     except (Exception, psycopg2.DatabaseError) as error:
         logger.info("An error occured : ")
@@ -117,6 +119,7 @@ def track_visit():
 @app.route('/metrics_route')
 def metrics_endpoint():
     return metrics.registry.collect().encode('utf-8')
+
 
 # Add prometheus wsgi middleware to route /metrics requests
 app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
