@@ -6,7 +6,7 @@
   - name: Dashboard Setup
       kubernetes.core.k8s:
         state: present
-        src: ./kube/dashboard.yml
+        src: ../kube/dashboard.yml
   
   - name: Create a Deployment by reading the definition from a local file
       kubernetes.core.k8s:
