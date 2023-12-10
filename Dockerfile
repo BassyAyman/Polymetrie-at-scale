@@ -9,7 +9,7 @@ ENV POSTGRES_USER=postgres \
     POSTGRES_DB=postgres \
     POSTGRES_HOST=my-postgresql \
     POSTGRES_PORT=5432 \
-    REDIS_HOST=my-redis \
+    REDIS_HOST=my-redis-master \
     REDIS_PORT=6379
 
 COPY main.py app.py
