@@ -84,7 +84,7 @@ def test_connection():
         if conn is not None:
             conn.close()
             logger.info('Database connection closed.')
-            return db_version
+            return str(db_version)
 
 
 @app.route('/track', methods=['POST'])

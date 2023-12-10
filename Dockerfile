@@ -5,8 +5,8 @@ WORKDIR /app
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
-ENV POSTGRES_USER=si5_sacc \
-    POSTGRES_DB=td_1 \
+ENV POSTGRES_USER=postgres \
+    POSTGRES_DB=postgres \
     POSTGRES_HOST=my-postgresql \
     POSTGRES_PORT=5432 \
     REDIS_HOST=my-redis \
