@@ -2,20 +2,20 @@
 - name: Setup OVH Cluster
   hosts: localhost
   tasks:
-
-  - name: Dashboard Setup
+    - name: Dashboard Setup
       kubernetes.core.k8s:
         state: present
         src: ../kube/dashboard.yml
   
   - name: Create a Deployment by reading the definition from a local file
       kubernetes.core.k8s:
+        namespace: default
         definition: "{{ lookup('file', '../kube/polymetrie_deployment.yml') | from_yaml }}"
 
   - name: Create a Service by reading the definition from a local file # Another way to provide .yml source file
       kubernetes.core.k8s:
         state: present
-        namespace: testing
+        namespace: default
         src: ../kube/polymetrie_service.yml
 
   - name: Add stable chart repo
@@ -25,7 +25,8 @@
 
   - name: Deploy postgresql database
       kubernetes.core.helm:
-        name: my-postgres
+        name: my-postgresql
+        release_namespace: default
         chart_ref: bitnami/postgresql
         values:
           primary:
@@ -36,4 +37,8 @@
   - name: Deploy redis database
       kubernetes.core.helm:
         name: my-redis
+        release_namespace: default
         chart_ref: bitnami/redis
+        values:
+          replica:
+            replicaCount: 1
