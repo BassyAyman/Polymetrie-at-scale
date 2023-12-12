@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: my-app
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/pns-si5-cloud/orchestration-at-scale-23-24-polymetrie-d.git
+    targetRevision: HEAD
+    path: argocd
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: default
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
