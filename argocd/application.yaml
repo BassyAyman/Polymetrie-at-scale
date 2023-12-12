@@ -7,9 +7,9 @@ spec:
   project: default
 
   source:
-    repoURL: https://github.com/pns-si5-cloud/orchestration-at-scale-23-24-polymetrie-d.git
+    repoURL: git@github.com:pns-si5-cloud/orchestration-at-scale-23-24-polymetrie-d.git
     targetRevision: HEAD
-    path: argocd
+    path: kube
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: default
