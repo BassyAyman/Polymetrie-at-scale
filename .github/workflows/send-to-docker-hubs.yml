@@ -38,8 +38,7 @@ jobs:
         run: |
           VERSION=$(grep 'image:' kube/polymetrie_deployment.yml | awk -F ':' '{print $3}' | xargs)
           NEW_VERSION=$(echo $VERSION | awk -F. -v OFS=. '{$NF++;print}')
-          
-          sed -ri "s|(igormel/polymetrie:)([0-9]+)|echo \1$((\2+1))|e" kube/polymetrie_deployment.yml
+          sed -i 's/\(image: igormel\/polymetrie:\)[0-9]*/\1'"$NEW_VERSION"'/' kube/polymetrie_deployment.yml
           echo "::set-output name=new_version::$NEW_VERSION"
           cat kube/polymetrie_deployment.yml
 
