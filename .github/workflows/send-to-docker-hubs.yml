@@ -33,7 +33,7 @@ jobs:
           git config --global user.email 'github-actions@github.com'
           git pull
 
-      - name: Auto-increment version
+      - name: Auto-increment version and commit
         id: auto_increment
         run: |
           VERSION=$(grep 'image:' kube/polymetrie_deployment.yml | awk -F ':' '{print $3}' | xargs)
@@ -41,11 +41,11 @@ jobs:
           sed -i 's/\(image: igormel\/polymetrie:\)[0-9]*/\1'"$NEW_VERSION"'/' kube/polymetrie_deployment.yml
           echo "::set-output name=new_version::$NEW_VERSION"
           cat kube/polymetrie_deployment.yml
+          git add kube/polymetrie_deployment.yml
+          git commit -m "Increment image version to $NEW_VERSION"
 
       - name: Commit and push
         run: |
-          git add kube/polymetrie_deployment.yml
-          git commit -m "Increment image version to $NEW_VERSION"
           git push
 
       - name: Set up Docker Buildx

@@ -23,3 +23,7 @@ Go to https://localhost:8080
 Username is `admin`  
 Get password with `kubectl get secret -n argocd argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d`
 
+### Prometheus
+#### intall steps
+follow this : [prometheus install with helm repo steps](https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack)
+

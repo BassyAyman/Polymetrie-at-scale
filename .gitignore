@@ -2,3 +2,6 @@
 .env
 .vscode/*
 build-push-dockerhub.sh
+# Terraform
+.terraform
+.terraform.lock.hcl

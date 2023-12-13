@@ -124,7 +124,7 @@ def metrics_endpoint():
 # a default route to say hello
 @app.route('/')
 def hello():
-    return 'It works! (1.3 modified 13/12/2023 10:42)'
+    return 'It works! (main.py modified 13/12/2023 16:02)'
 
 
 # Add prometheus wsgi middleware to route /metrics requests
