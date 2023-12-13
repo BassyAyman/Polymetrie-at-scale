@@ -52,7 +52,7 @@ resource "kubernetes_service" "test" {
     selector = {
       app = kubernetes_deployment.test.spec.0.template.0.metadata.0.labels.app
     }
-    type = "LoadBalancer"
+    type = "ClusterIP"
     port {
       port        = 80
       target_port = 8080
