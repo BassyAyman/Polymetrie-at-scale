@@ -33,7 +33,7 @@ resource "kubernetes_deployment" "test" {
       }
       spec {
         container {
-1.          image = "igormel/polymetrie:1.2"
+          image = "igormel/polymetrie:1.2"
           name  = "polymetrie-container"
           port {
             container_port = 8080
