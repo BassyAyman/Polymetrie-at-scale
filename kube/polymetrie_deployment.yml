@@ -1,9 +1,9 @@
-apiVersion: apps/v2
+apiVersion: apps/v3
 kind: Deployment
 metadata:
   name: polymetrie-deployment
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: polymetrie-app
@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: polymetrie-container
-        image: igormel/polymetrie:2
+        image: igormel/polymetrie:3
         env:
         - name: POSTGRES_PASSWORD
           valueFrom:
