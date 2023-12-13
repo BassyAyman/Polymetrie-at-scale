@@ -9,6 +9,7 @@ spec:
   rules:
   - http:
       paths:
+      - host: polymetrie.orch-team-d.pns-projects.fr.eu.org
       - path: /
         pathType: ImplementationSpecific
         backend:
