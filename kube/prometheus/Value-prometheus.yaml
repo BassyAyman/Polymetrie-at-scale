@@ -1,0 +1,87 @@
+##
+## Starter Kit configuration for Prometheus stack (VALUE BY ICORP)
+##
+## recuperer de la :
+#  - https://github.com/digitalocean/Kubernetes-Starter-Kit-Developers/blob/main/04-setup-observability/assets/manifests/prom-stack-values-v35.5.1.yaml
+#  - https://enix.io/fr/blog/prometheus-kubernetes/#installation
+
+
+# car on est dans le cloud provider, pas de sens de recup de la data lier au admin
+# feature sur le master node car on y a pas access anw
+
+kubeControllerManager:
+  enabled: false
+
+kubeScheduler:
+  enabled: false
+
+kubeEtcd:
+  enabled: false
+
+kubeProxy:
+  enabled: false
+
+
+alertmanager:
+  ## Deploy alertmanager
+  ##
+  enabled: true
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    pathType: Prefix
+    hosts:
+      - grafana.orch-team-d.pns-projects.fr.eu.org
+
+grafana:
+  enabled: true
+  adminPassword: icorp-92i
+
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    pathType: Prefix
+    hosts:
+      - grafana.orch-team-d.pns-projects.fr.eu.org
+
+  persistence:
+    enabled: true
+    type: statefulset
+    storageClassName: csi-cinder-classic
+    accessModes: ["ReadWriteOnce"]
+    size: 1Gi
+
+## Manages Prometheus and Alertmanager components
+##
+prometheusOperator:
+  enabled: true
+
+## Deploy a Prometheus instance
+##
+prometheus:
+  enabled: true
+
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    pathType: Prefix
+    hosts:
+      - prometheus.orch-team-d.pns-projects.fr.eu.org
+# https://kubernetes:github:io/ingress-nginx/examples/auth/basic/:  a voir pour le mdp de prometheus
+#    annotations:
+#      - nginx.ingress.kubernetes.io/auth-type: basic
+#      - nginx.ingress.kubernetes.io/auth-secret: prometheus-basic-auth
+#      - nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required'
+
+  prometheusSpec:
+
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: csi-cinder-classic
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 16Gi
+
+    retention: 7d
