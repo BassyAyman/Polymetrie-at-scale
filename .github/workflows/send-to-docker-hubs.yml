@@ -8,6 +8,8 @@ on:
 jobs:
   build-docker:
     runs-on: ubuntu-latest
+    environment:
+      name: Main
     outputs:
       new_version: ${{ steps.auto_increment.outputs.new_version }}
 
@@ -25,6 +27,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install PyYAML
 
+      - name: Git config
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git pull
+
       - name: Auto-increment version
         id: auto_increment
         run: |
@@ -34,11 +42,9 @@ jobs:
           sed -i "s/$VERSION/$NEW_VERSION/g" kube/polymetrie_deployment.yml
           echo "::set-output name=new_version::$NEW_VERSION"
           cat kube/polymetrie_deployment.yml
-          
-                
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@github.com'
-          
+
+      - name: Commit and push
+        run: |
           git add kube/polymetrie_deployment.yml
           git commit -m "Increment image version to $NEW_VERSION"
           git push
