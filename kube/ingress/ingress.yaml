@@ -7,13 +7,23 @@ metadata:
   namespace: default
 spec:
   rules:
-  - http:
+  - host: polymetrie.orch-team-d.pns-projects.fr.eu.org
+    http:
       paths:
-      - host: polymetrie.orch-team-d.pns-projects.fr.eu.org
       - path: /
         pathType: ImplementationSpecific
         backend:
           service:
             name: polymetrie-service
+            port:
+              number: 80
+  - host: argocd.orch-team-d.pns-projects.fr.eu.org
+    http:
+      paths:
+      - path: /
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: argocd-server
             port:
               number: 80
