@@ -11,7 +11,7 @@ provider "kubernetes" {
 }
 resource "kubernetes_namespace" "test" {
   metadata {
-    name = "terraform_test"
+    name = "terraform-test"
   }
 }
 resource "kubernetes_deployment" "test" {

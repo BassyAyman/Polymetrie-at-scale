@@ -121,6 +121,12 @@ def metrics_endpoint():
     return metrics.registry.collect().encode('utf-8')
 
 
+# a default route to say hello
+@app.route('/')
+def hello():
+    return 'It works!'
+
+
 # Add prometheus wsgi middleware to route /metrics requests
 app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
     '/metrics': make_wsgi_app()
