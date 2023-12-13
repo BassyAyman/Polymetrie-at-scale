@@ -39,7 +39,7 @@ jobs:
           VERSION=$(grep 'image:' kube/polymetrie_deployment.yml | awk -F ':' '{print $3}' | xargs)
           NEW_VERSION=$(echo $VERSION | awk -F. -v OFS=. '{$NF++;print}')
           sed -i 's/\(image: igormel\/polymetrie:\)[0-9]*/\1'"$NEW_VERSION"'/' kube/polymetrie_deployment.yml
-          echo "::set-output name=new_version::$NEW_VERSION"
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
           cat kube/polymetrie_deployment.yml
 
       - name: Commit and push
