@@ -20,10 +20,20 @@ spec:
   - host: argocd.orch-team-d.pns-projects.fr.eu.org
     http:
       paths:
-      - path: /
+      - path: /argocd
         pathType: ImplementationSpecific
         backend:
           service:
             name: argocd-server
             port:
               number: 80
+  - host: dashboard.orch-team-d.pns-projects.fr.eu.org
+    http:
+      paths:
+      - path: /dashboard
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: kubernetes-dashboard
+            port:
+              number: 443
