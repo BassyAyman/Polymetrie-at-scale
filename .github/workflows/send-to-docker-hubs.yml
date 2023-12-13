@@ -8,10 +8,40 @@ on:
 jobs:
   build-docker:
     runs-on: ubuntu-latest
+    outputs:
+      new_version: ${{ steps.auto_increment.outputs.new_version }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install PyYAML
+
+      - name: Auto-increment version
+        id: auto_increment
+        run: |
+          VERSION=$(grep 'image:' kube/polymetrie_deployment.yml | awk -F ':' '{print $3}' | xargs)
+          NEW_VERSION=$(echo $VERSION | awk -F. -v OFS=. '{$NF++;print}')
+          
+          sed -i "s/$VERSION/$NEW_VERSION/g" kube/polymetrie_deployment.yml
+          echo "::set-output name=new_version::$NEW_VERSION"
+          cat kube/polymetrie_deployment.yml
+          
+                
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          
+          git add kube/polymetrie_deployment.yml
+          git commit -m "Increment image version to $NEW_VERSION"
+          git push
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
@@ -36,7 +66,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: igormel/polymetrie:latest
+          tags: igormel/polymetrie:${{ steps.auto_increment.outputs.new_version }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
 
