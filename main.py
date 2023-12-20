@@ -17,6 +17,8 @@ redis_client = redis.Redis(host=os.environ.get("REDIS_HOST"), port=os.environ.ge
                            password=os.environ.get("REDIS_PASSWORD"), db=0)
 
 
+# this commit is the proof the ci/cd pipeline works
+
 def increment_counter(url):
     logger.info(f"Incrementing counter for {url}")
     redis_client.incr(url)
@@ -29,8 +31,7 @@ def find_client(domain):
     try:
         connection = psycopg2.connect(user=os.environ.get("POSTGRES_USER"),
                                       password=os.environ.get("POSTGRES_PASSWORD"),
-                                      host=os.environ.get("POSTGRES_HOST"),
-                                      port=os.environ.get("POSTGRES_PORT"),
+                                      host=os.environ.get("POSTGRES_HOST"), port=os.environ.get("POSTGRES_PORT"),
                                       database=os.environ.get("POSTGRES_DB"))
         logger.info("Connected to PostgreSQL")
 
@@ -57,10 +58,8 @@ def test_connection():
         # connect to the PostgreSQL server
         bd = os.environ.get("POSTGRES_DB")
         logger.info(f"Connecting to the PostgreSQL database... {bd}")
-        conn = psycopg2.connect(user=os.environ.get("POSTGRES_USER"),
-                                password=os.environ.get("POSTGRES_PASSWORD"),
-                                host=os.environ.get("POSTGRES_HOST"),
-                                port=os.environ.get("POSTGRES_PORT"),
+        conn = psycopg2.connect(user=os.environ.get("POSTGRES_USER"), password=os.environ.get("POSTGRES_PASSWORD"),
+                                host=os.environ.get("POSTGRES_HOST"), port=os.environ.get("POSTGRES_PORT"),
                                 database=os.environ.get("POSTGRES_DB"))
 
         # create a cursor
@@ -128,9 +127,7 @@ def hello():
 
 
 # Add prometheus wsgi middleware to route /metrics requests
-app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
-    '/metrics': make_wsgi_app()
-})
+app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {'/metrics': make_wsgi_app()})
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8080)
