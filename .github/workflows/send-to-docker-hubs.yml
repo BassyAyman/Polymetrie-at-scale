@@ -5,8 +5,9 @@ on:
     branches:
       - master
     paths:
-          - 'main.py'
-          - 'Dockerfile'
+      - main.py
+      - Dockerfile
+
 jobs:
   build-docker:
     runs-on: ubuntu-latest
@@ -28,62 +29,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install PyYAML
-          sudo apt-get install -y jq
-
-      - name: Get artifact download URL
-        id: get_artifact
-        run: |
-          ARTIFACT_URL=$(curl \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            "https://api.github.com/repos/${{ github.repository }}/actions/artifacts" \
-            | jq -r '.artifacts[] | select(.name=="main_py_checksum" and .expired==false) | .archive_download_url' | head -n 1)
-          echo "Artifact URL: $ARTIFACT_URL"
-          if [[ -z "$ARTIFACT_URL" ]]; then
-            echo "No artifact URL found. Exiting..."
-            exit 1
-          fi
-          echo "ARTIFACT_URL=$ARTIFACT_URL" >> $GITHUB_ENV
-
-      - name: Download previous checksum
-        run: |
-          curl -L -o checksum.zip -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" $ARTIFACT_URL
-          unzip -o checksum.zip -d ${{ github.workspace }}  # The -o option is used to overwrite existing files without prompting
-          cat ${{ github.workspace }}/checksum.txt
-
-      - name: Calculate Current Checksum
-        run: |
-          echo "Calculating checksum for main.py..."
-          sha256sum main.py | awk '{print $1}' > current_checksum.txt
-          echo "current_checksum=$(cat current_checksum.txt)"
-          echo "main_py_checksum=$(cat ${{ github.workspace }}/checksum.txt)" >> $GITHUB_ENV
-
-      - name: Compare Checksum
-        run: |
-          if diff current_checksum.txt ${{ github.workspace }}/checksum.txt; then
-            echo "Checksums are identical. No changes detected."
-            echo "changed=false" >> $GITHUB_ENV
-          else
-            echo "Checksums are different. Changes detected."
-            echo "changed=true" >> $GITHUB_ENV
-          fi
-
-      - name: Stop if no changes detected
-        if: env.changed == 'false'
-        run: |
-          echo "No changes detected in main.py"
-          exit 78  # Exits with a neutral status
-
-      - name: Store Checksum
-        if: env.changed == 'true'
-        uses: actions/upload-artifact@v2
-        with:
-          name: main_py_checksum
-          path: checksum.txt
-
-      - name: Check checksum file existence
-        run: |
-          ls -l ${{ github.workspace }}/current_checksum.txt
 
       - name: Git config
         run: |
@@ -97,7 +42,7 @@ jobs:
           VERSION=$(grep 'image:' kube/polymetrie_deployment.yml | awk -F ':' '{print $3}' | xargs)
           NEW_VERSION=$(echo $VERSION | awk -F. -v OFS=. '{$NF++;print}')
           sed -i 's/\(image: igormel\/polymetrie:\)[0-9]*/\1'"$NEW_VERSION"'/' kube/polymetrie_deployment.yml
-          echo "new_version=$NEW_VERSION" >> $GITHUB_ENV
+          echo "::set-output name=new_version::$NEW_VERSION"
           cat kube/polymetrie_deployment.yml
           git add kube/polymetrie_deployment.yml
           git commit -m "Increment image version to $NEW_VERSION"
@@ -129,7 +74,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: igormel/polymetrie:${{ env.new_version }}
+          tags: igormel/polymetrie:${{ steps.auto_increment.outputs.new_version }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
 
