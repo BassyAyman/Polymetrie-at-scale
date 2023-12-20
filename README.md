@@ -13,7 +13,8 @@ Use LoadBalancer's public IP from ``kubectl get svc``.
 ### Postgresql and Redis deployment 
 Add bitnami repo ``helm repo add bitnami https://charts.bitnami.com/bitnami``. <br>
 Run ``helm install -f postgres_values.yml my-postgresql bitnami/postgresql`` for posgresql database. <br>
-Run ``helm install my-redis bitnami/redis`` for redis. <br> <br>
+Run ``helm install my-redis bitnami/redis`` for redis.
+
 For more information about how to connect to these resources run ``helm status my-postgresql`` or ``helm status my-redis``.
 
 ### ArgoCD
