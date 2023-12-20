@@ -27,6 +27,44 @@ jobs:
           python -m pip install --upgrade pip
           pip install PyYAML
 
+      - name: Download previous checksum
+        uses: actions/download-artifact@v2
+        with:
+          name: main_py_checksum
+          path: ${{ github.workspace }}
+
+      - name: Calculate Checksum
+        id: checksum
+        run: |
+          sha256sum main.py | awk '{print $1}' > checksum.txt
+          echo "main_py_checksum=$(cat checksum.txt)" >> $GITHUB_ENV
+
+
+      - name: Compare Checksum
+        id: compare_checksum
+        run: |
+          if [ -f ${{ github.workspace }}/main_py_checksum ]; then
+            if diff checksum.txt ${{ github.workspace }}/main_py_checksum; then
+              echo "::set-output name=changed::false"
+            else
+              echo "::set-output name=changed::true"
+            fi
+          else
+            echo "::set-output name=changed::true"
+          fi
+
+      - name: Stop if no changes detected
+        if: steps.compare_checksum.outputs.changed == 'false'
+        run: |
+          echo "No changes detected in main.py"
+          exit 0
+
+      - name: Store Checksum
+        uses: actions/upload-artifact@v2
+        with:
+          name: main_py_checksum
+          path: checksum.txt
+
       - name: Git config
         run: |
           git config --global user.name 'github-actions'
