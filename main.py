@@ -49,6 +49,29 @@ def find_client(domain):
 
     return client
 
+def get_all_clients():
+    try:
+        connection = psycopg2.connect(user=os.environ.get("POSTGRES_USER"),
+                                      password=os.environ.get("POSTGRES_PASSWORD"),
+                                      host=os.environ.get("POSTGRES_HOST"), port=os.environ.get("POSTGRES_PORT"),
+                                      database=os.environ.get("POSTGRES_DB"))
+        logger.info("Connected to PostgreSQL")
+
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM customer")
+
+        # Fetch all the rows
+        clients = cursor.fetchall()
+        logger.info(f"Clients found: {clients}")
+
+        cursor.close()
+        connection.close()
+    except (Exception, psycopg2.Error) as error:
+        logger.error(f"Error while connecting to PostgreSQL: {error}")
+        return None
+
+    return clients
+
 
 @app.route('/test_db_co', methods=['GET'])
 def test_connection():
@@ -115,11 +138,6 @@ def track_visit():
         return jsonify(success=False, message="Server error"), 500
 
 
-@app.route('/metrics_route')
-def metrics_endpoint():
-    return metrics.registry.collect().encode('utf-8')
-
-
 # a default route to say hello
 @app.route('/')
 def hello():
@@ -129,9 +147,26 @@ def hello():
 # Add prometheus wsgi middleware to route /metrics requests
 # app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {'/metrics': make_wsgi_app()})
 
+def get_counter(url):
+    # Fetch the counter value for the given URL
+    counter = redis_client.get(url)
+    
+    # If the counter is None (indicating the URL doesn't exist), set it to 0
+    if counter is None:
+        counter = 0
+    else:
+        # Convert counter from bytes to int
+        counter = int(counter)
+    
+    return counter
+
 @app.route('/metrics')
-def metrics_endpoint_test():
-    return 'clics_done_for_test 125'
+def metrics_endpoint():
+    result = ""
+    clients = get_all_clients()
+    for client in clients:
+        result + client[0] + " " + str(get_counter(client[0])) + "\n"
+    return result
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8080)
