@@ -164,9 +164,11 @@ def get_counter(url):
 def metrics_endpoint():
     result = 0
     clients = get_all_clients()
+    stats = ''
     for client in clients:
+        '#' + stats + ' ' + client[0] + ' ' + str(get_counter(client[0])) + '\n'
         result + get_counter(client[0])
-    return 'clics_for_polytech' + str(result)
+    return 'clics_for_polytech ' + str(result)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8080)
