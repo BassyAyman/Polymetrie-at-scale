@@ -75,6 +75,22 @@ prometheus:
 
   prometheusSpec:
 
+#    # selectionne les service monitor qui ont un label release de valeur egale a prometheus
+#    serviceMonitorSelector:
+#      matchLabels:
+#        release: prometheus
+#
+    ruleSelectorNilUsesHelmValues: false
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    probeSelectorNilUsesHelmValues: false
+#
+#
+#    # Permet a prometheus de target les services monitor dans les namespaces avec un label prometheus de valeur egale a enabled
+#    serviceMonitorNamespaceSelector:
+#      matchLabels:
+#        prometheus: enabled
+
     storageSpec:
       volumeClaimTemplate:
         spec:

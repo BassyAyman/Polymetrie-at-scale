@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: polymetrie-servicemonitor
+  labels:
+    release: kube-prometheus-stack
+  namespace: default
+spec:
+  namespaceSelector:
+    matchNames:
+    - default # namespace dans lequel est polymetrie
+  selector:
+    matchLabels:
+#       app: polymetrie-app (marche pas car match pas avec le label dans metadata du deploiement)
+      app.kubernetes.io/instance: my-app
+  endpoints:
+  - port: http
+    path: /metrics # endpoints de recuperation des metrics
