@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: polymetrie-container
-        image: igormel/polymetrie:24
+        image: igormel/polymetrie:25
         env:
         - name: POSTGRES_PASSWORD
           valueFrom:
