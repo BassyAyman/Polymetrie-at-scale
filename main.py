@@ -69,7 +69,6 @@ def get_all_clients():
     except (Exception, psycopg2.Error) as error:
         logger.error(f"Error while connecting to PostgreSQL: {error}")
         return None
-
     return clients
 
 
@@ -127,7 +126,7 @@ def track_visit():
 
         if client:
             logger.info(f"Visit from {client[0]}")
-            increment_counter(url)
+            increment_counter(client[0])
             return jsonify(success=True, message="Visit counted"), 200
 
         logger.info(f"Visit from unknown client: {domain}")
@@ -157,7 +156,7 @@ def get_counter(url):
     else:
         # Convert counter from bytes to int
         counter = int(counter)
-    
+    logger.info(f"Counter for {url}, is {counter}")
     return counter
 
 @app.route('/metrics')
