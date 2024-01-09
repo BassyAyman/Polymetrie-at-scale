@@ -127,7 +127,11 @@ def hello():
 
 
 # Add prometheus wsgi middleware to route /metrics requests
-app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {'/metrics': make_wsgi_app()})
+# app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {'/metrics': make_wsgi_app()})
+
+@app.route('/metrics')
+def metrics_endpoint_test():
+    return 'clics_done_for_test 125'
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8080)
