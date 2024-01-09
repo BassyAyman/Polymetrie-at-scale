@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-metrics = PrometheusMetrics(app)
+#metrics = PrometheusMetrics(app)
 redis_client = redis.Redis(host=os.environ.get("REDIS_HOST"), port=os.environ.get("REDIS_PORT"),
                            password=os.environ.get("REDIS_PASSWORD"), db=0)
 
@@ -165,9 +165,9 @@ def metrics_endpoint():
     clients = get_all_clients()
     stats = ''
     for client in clients:
-        stats = '#' + stats + ' ' + client[0] + ' ' + str(get_counter(client[0])) + '\n'
-        result + get_counter(client[0])
-    return stats + '\n' + 'clics_for_polytech ' + str(result)
+        stats = stats + ' ' + client[0] + ' ' + str(get_counter(client[0])) + '\n <br>'
+        result = result + get_counter(client[0])
+    return stats + '\n <br>' + 'clics_for_polytech ' + str(result)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8080)
