@@ -8,4 +8,4 @@ spec:
   script:
     configMap:
       name: "my-test"
-      file: "first-test.js"
+      file: "stress-test.js"
