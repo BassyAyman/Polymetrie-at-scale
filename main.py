@@ -7,6 +7,7 @@ import redis
 import psycopg2
 import logging
 import os
+import re
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -159,15 +160,25 @@ def get_counter(url):
     logger.info(f"Counter for {url}, is {counter}")
     return counter
 
+def format_client(client_url):
+    # Remove 'http://' or 'https://'
+    client_url = re.sub(r'^https?://', '', client_url)
+    # Replace non-letter characters with underscores
+    metric_name = re.sub(r'[^a-zA-Z]', '_', client_url)
+    return metric_name
+
 @app.route('/metrics')
 def metrics_endpoint():
     result = 0
     clients = get_all_clients()
     stats = ''
     for client in clients:
-        stats = '#' + stats + ' ' + client[0] + ' ' + str(get_counter(client[0])) + '<br>'
-        result = result + get_counter(client[0])
-    return 'all_clics_for_polytech ' + str(result)
+        #stats = '#' + stats + ' ' + client[0] + ' ' + str(get_counter(client[0])) + '<br>'
+        formated_client = format_client(client[0])
+        client_counter = get_counter(client[0])
+        stats = stats + formated_client + ' ' + str(client_counter) + '<br>'
+        result = result + client_counter
+    return stats + '<br>' + 'all_clics_for_polytech ' + str(result)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8080)
