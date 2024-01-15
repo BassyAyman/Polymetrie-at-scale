@@ -176,7 +176,7 @@ def metrics_endpoint():
         #stats = '#' + stats + ' ' + client[0] + ' ' + str(get_counter(client[0])) + '<br>'
         formated_client = format_client(client[0])
         client_counter = get_counter(client[0])
-        stats = stats + formated_client + ' ' + str(client_counter) + '<br>'
+        stats = stats + formated_client + ' ' + str(client_counter) + '\n<br>'
         result = result + client_counter
     return stats + 'all_clics_for_polytech ' + str(result)
 
