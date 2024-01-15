@@ -178,7 +178,7 @@ def metrics_endpoint():
         client_counter = get_counter(client[0])
         stats = stats + formated_client + ' ' + str(client_counter) + '<br>'
         result = result + client_counter
-    return stats + '<br>' + 'all_clics_for_polytech ' + str(result)
+    return stats + 'all_clics_for_polytech ' + str(result)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8080)
