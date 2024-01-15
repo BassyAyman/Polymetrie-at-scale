@@ -186,8 +186,8 @@ def metrics_endpoint():
 
 @app.route('/metrics')
 def metrics():
-    c = Counter('my_custom_metric', 'Description of counter')
-    c.inc()     # Increment by 1
+    #c = Counter('my_custom_metric', 'Description of counter')
+    #c.inc()     # Increment by 1
     return generate_latest(registry), 200, {'Content-Type': CONTENT_TYPE_LATEST}
 
 
