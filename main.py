@@ -1,7 +1,9 @@
 from flask import Flask, request, jsonify
 from prometheus_flask_exporter import PrometheusMetrics
-from werkzeug.middleware.dispatcher import DispatcherMiddleware
-from prometheus_client import make_wsgi_app
+#from werkzeug.middleware.dispatcher import DispatcherMiddleware
+#from prometheus_client import make_wsgi_app, Counter
+from prometheus_client import Counter, Gauge, generate_latest, REGISTRY, CollectorRegistry, push_to_gateway, pushadd_to_gateway
+from prometheus_client.exposition import CONTENT_TYPE_LATEST
 from urllib.parse import urlparse
 import redis
 import psycopg2
@@ -14,6 +16,8 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 #metrics = PrometheusMetrics(app)
+registry = CollectorRegistry()
+
 redis_client = redis.Redis(host=os.environ.get("REDIS_HOST"), port=os.environ.get("REDIS_PORT"),
                            password=os.environ.get("REDIS_PASSWORD"), db=0)
 
@@ -167,7 +171,7 @@ def format_client(client_url):
     metric_name = re.sub(r'[^a-zA-Z]', '_', client_url)
     return metric_name
 
-@app.route('/metrics')
+@app.route('/metrics1')
 def metrics_endpoint():
     result = 0
     clients = get_all_clients()
@@ -179,6 +183,13 @@ def metrics_endpoint():
         stats = stats + formated_client + ' ' + str(client_counter) + '\n<br>'
         result = result + client_counter
     return stats + 'all_clics_for_polytech ' + str(result)
+
+@app.route('/metrics')
+def metrics():
+    c = Counter('my_failures', 'Description of counter')
+    c.inc()     # Increment by 1
+    return generate_latest(registry), 200, {'Content-Type': CONTENT_TYPE_LATEST}
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8080)
