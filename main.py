@@ -17,6 +17,10 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 #metrics = PrometheusMetrics(app)
 registry = CollectorRegistry()
+my_failures_total = Counter('my_custom_total', 'Total number of failures')
+my_failures = Counter('my_custom', 'Number of failures')
+my_failures_created = Counter('my_custom_created', 'Number of failures created')
+
 
 redis_client = redis.Redis(host=os.environ.get("REDIS_HOST"), port=os.environ.get("REDIS_PORT"),
                            password=os.environ.get("REDIS_PASSWORD"), db=0)
