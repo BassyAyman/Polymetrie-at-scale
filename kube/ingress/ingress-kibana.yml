@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kibana
+  namespace: elastic-system
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - kibana.orch-team-d.pns-projects.fr.eu.org
+    secretName: kibana-kb-http-certs-public
+  rules:
+  - host: kibana.orch-team-d.pns-projects.fr.eu.org
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: kibana-kb-http
+            port:
+              number: 5601

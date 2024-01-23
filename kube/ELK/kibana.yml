@@ -1,0 +1,25 @@
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: kibana
+spec:
+  version: 8.6.2
+  count: 1
+  elasticsearchRef:
+    name: elastic-cluster
+  podTemplate:
+    spec:
+      containers:
+      - name: kibana
+        env:
+          - name: NODE_OPTIONS
+            value: "--max-old-space-size=2048"
+          - name: SERVER_PUBLICBASEURL
+            value: "http://kibana.orch-team-d.pns-projects.fr.eu.org/"
+        resources:
+          requests:
+            memory: 1Gi
+            cpu: 0.5
+          limits:
+            memory: 2.5Gi
+            cpu: 2
