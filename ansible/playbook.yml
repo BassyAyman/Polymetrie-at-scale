@@ -42,3 +42,42 @@
         values:
           replica:
             replicaCount: 1
+
+  - name: Deploy argocd
+      kubernetes.core.k8s:
+        state: present
+        namespace: argocd
+        definition: "{{ lookup('file', '../argocd/application.yml') | from_yaml }}"
+
+  - name: Apply ConfigMap
+    kubernetes.core.k8s:
+        state: present
+        definition: "{{ lookup('file', '../argocd/configmap.yml') | from_yaml }}"
+
+  - name: Add prometheus-community stable chart repo
+      kubernetes.core.helm_repository:
+        name: stable
+        repo_url: "https://prometheus-community.github.io/helm-charts"
+  
+  - name: Deploy prometheus
+      kubernetes.core.helm:
+        name: my-prometheus
+        release_namespace: prometheus
+        chart_ref: prometheus-community/kube-prometheus-stack
+        values: "{{ lookup('template', '../kube/prometheus/Value-prometheus.yaml') | from_yaml }}"
+
+  - name: Add ServiceMonitor
+    kubernetes.core.k8s:
+        state: present
+        definition: "{{ lookup('file', '../kube/prometheus/servicemonitor/polymetrie-servicemonitor.yaml') | from_yaml }}"
+
+  - name: Add grafana stable chart repo
+      kubernetes.core.helm_repository:
+        name: stable
+        repo_url: "https://grafana.github.io/helm-charts"
+
+  - name: Deploy latest version of Grafana chart inside monitoring namespace
+  kubernetes.core.helm:
+    name: grafana
+    chart_ref: stable/grafana
+    release_namespace: monitoring
