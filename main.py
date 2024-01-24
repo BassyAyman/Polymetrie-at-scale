@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
-#from prometheus_flask_exporter import PrometheusMetrics
-#from werkzeug.middleware.dispatcher import DispatcherMiddleware
-#from prometheus_client import make_wsgi_app
+# from prometheus_flask_exporter import PrometheusMetrics
+# from werkzeug.middleware.dispatcher import DispatcherMiddleware
+# from prometheus_client import make_wsgi_app
 from urllib.parse import urlparse
 import redis
 import psycopg2
@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-#metrics = PrometheusMetrics(app)
+# metrics = PrometheusMetrics(app)
 
 redis_client = redis.Redis(host=os.environ.get("REDIS_HOST"), port=os.environ.get("REDIS_PORT"),
                            password=os.environ.get("REDIS_PASSWORD"), db=0)
@@ -50,6 +50,7 @@ def find_client(domain):
         return None
 
     return client
+
 
 def get_all_clients():
     try:
@@ -151,7 +152,7 @@ def hello():
 def get_counter(url):
     # Fetch the counter value for the given URL
     counter = redis_client.get(url)
-    
+
     # If the counter is None (indicating the URL doesn't exist), set it to 0
     if counter is None:
         counter = 0
@@ -161,6 +162,7 @@ def get_counter(url):
     logger.info(f"Counter for {url}, is {counter}")
     return counter
 
+
 def format_client(client_url):
     # Remove 'http://' or 'https://'
     client_url = re.sub(r'^https?://', '', client_url)
@@ -168,13 +170,14 @@ def format_client(client_url):
     metric_name = re.sub(r'[^a-zA-Z]', '_', client_url)
     return metric_name
 
+
 @app.route('/metrics')
 def metrics_endpoint():
     result = 0
     clients = get_all_clients()
     stats = ''
     for client in clients:
-        #stats = '#' + stats + ' ' + client[0] + ' ' + str(get_counter(client[0])) + '<br>'
+        # stats = '#' + stats + ' ' + client[0] + ' ' + str(get_counter(client[0])) + '<br>'
         formated_client = format_client(client[0])
         client_counter = get_counter(client[0])
         stats = stats + formated_client + ' ' + str(client_counter) + '\n'
