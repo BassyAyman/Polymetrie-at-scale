@@ -9,7 +9,7 @@ spec:
   ingressClassName: nginx
   tls:
   - hosts:
-    - elastic.orch-team-d.pns-projects.fr.eu.org
+    - elasticsearch.orch-team-d.pns-projects.fr.eu.org
     secretName: elastic-cluster-es-http-certs-public
   rules:
   - host: elastic.orch-team-d.pns-projects.fr.eu.org

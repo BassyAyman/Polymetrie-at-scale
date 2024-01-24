@@ -16,6 +16,6 @@ spec:
 
   syncPolicy:
     automated:
-      prune: true
-      selfHeal: true
+      prune: true # delete resources that are not in git
+      selfHeal: true # reconcile differences between git and cluster
 
