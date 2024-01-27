@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: polymetrie-deployment
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: polymetrie-app
